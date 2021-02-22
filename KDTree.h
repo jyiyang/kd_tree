@@ -9,7 +9,7 @@ class KDTree {
 public:
     KDTree(std::vector<T>& dataset);
     ~KDTree();
-    void kNNSearch();
+    void kNNSearch(size_t k, std::vector<T>& result);
 
     friend std::ostream& operator<< (std::ostream& out, const KDTree& tree) {
         tree.printTree(out, tree.root);

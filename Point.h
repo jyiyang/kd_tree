@@ -1,8 +1,6 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include "Value.h"
-
 #include <iostream>
 #include <initializer_list>
 #include <algorithm>
