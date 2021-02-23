@@ -99,7 +99,7 @@ void test1() {
     }
 
     cout << "======================" << endl;
-    cout << "Comparison of seach time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
+    cout << "Comparison of search time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
     cout << "KD tree search time: " << kdElapsed.count() << " us." << endl;
     cout << "Brute force search time: " << bfElapsed.count() << " us." << endl;
     cout << "======================" << endl;
@@ -159,7 +159,7 @@ void test2() {
     }
 
     cout << "======================" << endl;
-    cout << "Comparison of seach time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
+    cout << "Comparison of search time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
     cout << "KD tree search time: " << kdElapsed.count() << " us." << endl;
     cout << "Brute force search time: " << bfElapsed.count() << " us." << endl;
     cout << "======================" << endl;
