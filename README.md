@@ -2,12 +2,12 @@
 A simple implementation of the k-d tree data structure with C++11. Currently supports point-like data with different dimensions and floating point types. 
 The default metric is L2 (Euclidean distance).
 
-## Prerequisite 
+## Prerequisites 
 ```
 CMake
 ```
 This code is tested on MacOS 11.2, Clang++ 12.0, and CMake 3.19.5. 
-It should be fairly straight-forward to run on any Unix-based system. 
+It should be fairly straightforward to run on any Unix-based system. 
 
 ## Build and run
 ```
@@ -18,7 +18,7 @@ make
 ./main
 ```
 
-# Usage
+## Usage
 See `main.cpp` for the full test cases.
 ```
 // Initialize 3d points and put them in a STL vector container
