@@ -91,7 +91,7 @@ void test1() {
          << setw(width) << "Actual closest point from kd-tree: "
          << setw(width) << "Same point?" << endl;
     for (size_t i = 0; i < kNum; ++i) {
-        string diff = std::fabs(expected[i].calculateDistance(actual[i])) < 1e-7 ? "yes" : "no";
+        string diff = fabs(expected[i].calculateDistance(actual[i])) < 1e-7 ? "yes" : "no";
         cout << left
              << expected[i]
              << setw(swidth) << "  " << actual[i]
@@ -99,7 +99,7 @@ void test1() {
     }
 
     cout << "======================" << endl;
-    cout << "Time to search " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
+    cout << "Comparison of seach time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
     cout << "KD tree search time: " << kdElapsed.count() << " us." << endl;
     cout << "Brute force search time: " << bfElapsed.count() << " us." << endl;
     cout << "======================" << endl;
@@ -151,7 +151,7 @@ void test2() {
          << setw(width) << "Actual closest point from kd-tree: "
          << setw(width) << "Same point?" << endl;
     for (size_t i = 0; i < kNum; ++i) {
-        string diff = std::fabs(expected[i].calculateDistance(actual[i])) < 1e-7 ? "yes" : "no";
+        string diff = fabs(expected[i].calculateDistance(actual[i])) < 1e-7 ? "yes" : "no";
         cout << left
              << expected[i]
              << setw(swidth) << "  " << actual[i]
@@ -159,7 +159,7 @@ void test2() {
     }
 
     cout << "======================" << endl;
-    cout << "Time to search " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
+    cout << "Comparison of seach time for " << kNum << " closest point(s) from " << numPts << " points with dimension " << dim << endl;
     cout << "KD tree search time: " << kdElapsed.count() << " us." << endl;
     cout << "Brute force search time: " << bfElapsed.count() << " us." << endl;
     cout << "======================" << endl;
