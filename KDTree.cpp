@@ -6,7 +6,7 @@
 #include <queue>
 #include <unordered_set>
 
-// Helper functor
+// Helper functors
 template<typename T>
 struct DataComp {
     size_t split;
@@ -50,14 +50,17 @@ std::vector<T> KDTree<T>::searchKNearest(const T& queryData, size_t k) {
 
     std::vector<T> output;
     for (const auto& dataAndDistance: results) {
-        output.push_back(dataAndDistance.first);
+        output.emplace_back(dataAndDistance.first);
     }
 
     return output;
 }
 
 template <typename T>
-void KDTree<T>::findKNearest(const T& queryData, size_t k, TreeNode* node, std::unordered_set<TreeNode*>& visited, ResultList& results) {
+void KDTree<T>::findKNearest(const T& queryData, 
+                             size_t k, TreeNode* node, 
+                             std::unordered_set<TreeNode*>& visited, 
+                             ResultList& results) {
     if (visited.count(node) == 1) {
         if (node == root) {
             return;
@@ -69,16 +72,18 @@ void KDTree<T>::findKNearest(const T& queryData, size_t k, TreeNode* node, std::
 
     visited.insert(node);
     DistanceComp<T> distanceComp;
-    auto distance = node->data.calculateDistance(queryData);
-    auto maxIter = std::max_element(results.begin(), results.end(), distanceComp);
+    auto distance = node->data.calculateSqDistance(queryData);
     auto previousMaxDistance = std::numeric_limits<typename T::NumericType>::max();
 
-    if (maxIter != results.end()) {
-        previousMaxDistance = maxIter->second;
+    if (!results.empty()) {
+        previousMaxDistance = results.back().second;
     }
 
     if (results.size() < k || distance < previousMaxDistance) {
-        results.emplace_back(std::make_pair(node->data, distance));
+        results.emplace_back(node->data, distance);
+        // NB: This assumes the input K is small. If K is large, 
+        //     we should use a bounded priority queue to maintain
+        //     the order of the result set. 
         std::sort(results.begin(), results.end(), distanceComp);
 
         if (results.size() > k) {
@@ -86,27 +91,24 @@ void KDTree<T>::findKNearest(const T& queryData, size_t k, TreeNode* node, std::
         }
     }
 
-    if (node != root) {
-        auto splitDistance = node->parent->data.calculateSplitDistance(queryData, node->parent->split);
-
-        if (results.size() < k || splitDistance < previousMaxDistance) {
-            TreeNode* brotherNode = getBrotherNode(node);
-
-            if (brotherNode != nullptr) {
-                auto leafNode = findClosestLeafNode(brotherNode, queryData);
-                
-                if (leafNode != nullptr) {
-                    return findKNearest(queryData, k, leafNode, visited, results);
-                }
-            }
-        }
-    }
-
-    else {
+    if (node == root) {
         return;
     }
 
+    auto splitDistance = node->parent->data.calculateSqSplitDistance(queryData, node->parent->split);
+
+    if (results.size() < k || splitDistance < previousMaxDistance) {
+        TreeNode* brotherNode = getBrotherNode(node);
+        TreeNode* leafNode = findClosestLeafNode(brotherNode, queryData);
+
+        if (brotherNode != nullptr && leafNode != nullptr) {
+            findKNearest(queryData, k, leafNode, visited, results);
+            return;
+        }
+    }
+
     findKNearest(queryData, k, node->parent, visited, results);
+    return;
 }
 
 template <typename T>
@@ -130,6 +132,33 @@ typename KDTree<T>::TreeNode* KDTree<T>::buildTree(std::vector<T>& dataset,
     currNode->right = buildTree(dataset, level + 1, middleIndex + 1, endIndexPlusOne, currNode);
 
     return currNode;
+}
+
+template <typename T>
+void KDTree<T>::insert(const T& inData) {
+    TreeNode* leafNode = findClosestLeafNode(root, inData);
+
+    if (leafNode == nullptr) {
+        root = new TreeNode(0, inData);
+        treeSize = 1;
+    }
+    else {
+        if (leafNode->data == inData) {
+            return;
+        }
+
+        TreeNode* newNode = new TreeNode((leafNode->split + 1) % leafNode->data.getDimension(), inData);
+
+        if (inData[leafNode->split] < leafNode->data[leafNode->split]) {
+            leafNode->left = newNode;
+        }
+        else {
+            leafNode->right = newNode;
+        }
+
+        newNode->parent = leafNode;
+        treeSize++;
+    }
 }
 
 template <typename T>
@@ -190,6 +219,10 @@ void KDTree<T>::printTree(std::ostream& out, TreeNode* node) const {
 
 template <typename T>
 typename KDTree<T>::TreeNode* KDTree<T>::findClosestLeafNode(TreeNode* node, const T& queryData) {
+    if (node == nullptr) {
+        return nullptr;
+    }
+
     if (node->left == nullptr && node->right == nullptr) {
         return node;
     }
@@ -212,7 +245,7 @@ typename KDTree<T>::TreeNode* KDTree<T>::findClosestLeafNode(TreeNode* node, con
 
 template <typename T>
 typename KDTree<T>::TreeNode* KDTree<T>::getBrotherNode(TreeNode* node) {
-    if (node->parent == nullptr) {
+    if (node == nullptr || node->parent == nullptr) {
         return nullptr;
     }
 

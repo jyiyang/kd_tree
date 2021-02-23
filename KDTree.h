@@ -14,6 +14,7 @@ public:
     KDTree() = delete;
     KDTree(std::vector<T>& dataset);
     ~KDTree();
+    void insert(const T& inData);
     std::vector<T> searchKNearest(const T& queryData, size_t k);
 
     friend std::ostream& operator<< (std::ostream& out, const KDTree& tree) {
